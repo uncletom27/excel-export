@@ -40,7 +40,7 @@ public class XMLStringEscapeUtils {
     }
     
     public static String escape(String input) throws IOException{
-        StringWriter sw = new StringWriter();
+        StringWriter sw = new StringWriter(input.length() * 2);
         char[] inputc = input.toCharArray();
         for (int i = 0; i < inputc.length; i++) {
             char c = inputc[i];
