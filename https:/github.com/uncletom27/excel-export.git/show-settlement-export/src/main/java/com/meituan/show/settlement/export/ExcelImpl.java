@@ -5,10 +5,14 @@
  */
 package com.meituan.show.settlement.export;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -123,7 +127,7 @@ public class ExcelImpl implements Excel{
                 continue;
             }
             if(value instanceof String){
-                this.addCell( CellType.STRING.getSerializeString(), CellStyle.NONE.getSerializeString(), (String)value);
+                this.addCell( CellType.STRING.getSerializeString(), CellStyle.NONE.getSerializeString(), XMLStringEscapeUtils.escape((String)value));
             }else if(value instanceof Date){
                 this.addCell( CellType.STRING.getSerializeString(), CellStyle.NONE.getSerializeString(), (simpleDateFormat.format((Date) value)));
             }else if(value instanceof Boolean){
@@ -359,6 +363,69 @@ public class ExcelImpl implements Excel{
     private static class ClassMeta {
         private List<FieldMeta> fieldMetas;
     }
+    
+    public static void main(String[] args) throws IOException {
+        Server server = new Server();
+        server.start();
+        Socket s = new Socket("localhost", 8090);
+        OutputStream fos = s.getOutputStream();
+        Excel exel = new ExcelImpl(fos);
+        exel.beginNewSheet("付款表");
+        exel.addTitle(Test.class);
+        for (int i = 0; i < 1000000000; i++) {
+            Test t = new Test();
+            exel.addRow(t);
+        }
+        exel.endSheet();
+        exel.finish();
+        s.close();
+        System.err.println("finished");
+    }
+    
+    private static class Server extends Thread {
+
+        @Override
+        public void run() {
+            long l = 0;
+            ServerSocket ss;
+            try (FileOutputStream fos = new FileOutputStream("aaa.xlsx")){
+                ss = new ServerSocket(8090);
+                Socket s = ss.accept();
+                InputStream inputStream = s.getInputStream();
+                byte[] buff = new byte[1024];
+                int read = -1;
+                while((read = inputStream.read(buff)) != -1){
+                    l = l+ read;
+                    System.err.println(l);
+                    fos.write(buff, 0, read);
+                }
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
+        }
+        
+    }
+    
+    private static class Test {
+        @Cell(order = 1)
+        Date d = new Date();
+        @Cell(order = 2)
+        private String s = "大法师打发是发送到发送到发送到发送到发你好阿萨斯的发送";
+        @Cell(order = 2)
+        private long l = 123l;
+        @Cell(order = 3)
+        private boolean b = true;
+        @Cell(order = 4)
+        private  float f = 123.2f;
+        @Cell(order = 4)
+        private double dd = 123.2d;
+        
+    }
+    
+    
+    
     
     /**
      * copy from jdk
