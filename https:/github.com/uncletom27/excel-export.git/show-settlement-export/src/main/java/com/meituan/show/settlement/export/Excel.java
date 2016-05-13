@@ -6,6 +6,7 @@
 package com.meituan.show.settlement.export;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * @author xujia06
@@ -13,10 +14,14 @@ import java.io.IOException;
  *
  * @version 1.0
  */
-public interface Excel {
-    Excel beginNewSheet(String sheetName) throws IOException;
-    Excel endSheet() throws IOException;
-    Excel addRow(Object obj) throws IOException;
-    Excel addTitle(Class<?> clazz) throws IOException;
-    void finish() throws IOException;
+public abstract class Excel {
+    public static Excel newInstance(OutputStream outputStream) throws IOException{
+        return new ExcelImpl(outputStream);
+    }
+    
+    abstract Excel beginNewSheet(String sheetName) throws IOException;
+    abstract Excel endSheet() throws IOException;
+    abstract Excel addRow(Object obj) throws IOException;
+    abstract Excel addTitle(Class<?> clazz) throws IOException;
+    abstract void finish() throws IOException;
 }

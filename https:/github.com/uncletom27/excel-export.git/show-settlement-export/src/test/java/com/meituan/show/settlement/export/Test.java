@@ -14,7 +14,7 @@ public class Test {
         server.start();
         Socket s = new Socket("localhost", 8090);
         OutputStream fos = s.getOutputStream();
-        Excel exel = new ExcelImpl(fos);
+        Excel exel = Excel.newInstance(fos);
         exel.beginNewSheet("表");
         exel.addTitle(Test.class);
         for (int i = 0; i < 1000000000; i++) {
