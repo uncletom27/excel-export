@@ -123,7 +123,7 @@ class ExcelImpl extends Excel{
         for (FieldMeta fieldMeta : fieldMetas) {
             Object value = fieldMeta.valueOf(obj);
             if(value == null){
-                this.addCell( CellType.STRING.getSerializeString(), CellStyle.NONE.getSerializeString(), null);
+                this.addCell( CellType.STRING.getSerializeString(), CellStyle.NONE.getSerializeString(), "");
                 continue;
             }
             if(value instanceof String){
