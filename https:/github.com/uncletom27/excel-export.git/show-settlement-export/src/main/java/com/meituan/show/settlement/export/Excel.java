@@ -19,9 +19,9 @@ public abstract class Excel {
         return new ExcelImpl(outputStream);
     }
     
-    abstract Excel beginNewSheet(String sheetName) throws IOException;
-    abstract Excel endSheet() throws IOException;
-    abstract Excel addRow(Object obj) throws IOException;
-    abstract Excel addTitle(Class<?> clazz) throws IOException;
-    abstract void finish() throws IOException;
+    abstract public Excel beginNewSheet(String sheetName) throws IOException;
+    abstract public Excel endSheet() throws IOException;
+    abstract public Excel addRow(Object obj) throws IOException;
+    abstract public Excel addTitle(Class<?> clazz) throws IOException;
+    abstract public void finish() throws IOException;
 }
